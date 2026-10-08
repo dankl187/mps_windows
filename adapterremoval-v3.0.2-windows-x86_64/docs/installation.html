@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation &#8212; AdapterRemoval 3.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" />
+    <link rel="prev" title="AdapterRemoval" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
+<section id="precompiled-binaries">
+<h2>Precompiled binaries<a class="headerlink" href="#precompiled-binaries" title="Link to this heading">¶</a></h2>
+<p>Binaries are provided for 64-bit x86 Linux, ARM-based MacOSX, and Windows at <a class="reference external" href="https://github.com/MikkelSchubert/adapterremoval/releases/">https://github.com/MikkelSchubert/adapterremoval/releases/</a></p>
+</section>
+<section id="installing-from-source">
+<h2>Installing from source<a class="headerlink" href="#installing-from-source" title="Link to this heading">¶</a></h2>
+<p>This section describes how to build and install the latest version of AdapterRemoval from source.</p>
+<p>AdapterRemoval uses <code class="docutils literal notranslate"><span class="pre">make</span></code> to simplify invoking the underlying <a class="reference external" href="https://mesonbuild.com/">meson</a> build system. Power-users and package managers may invoke <code class="docutils literal notranslate"><span class="pre">meson</span></code> directly; use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-Bn</span></code> to view the recommended build commands.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
+<p>Building and installing AdapterRemoval requires the following:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span></code></p></li>
+<li><p>A C++17 capable compiler, such as GCC v9+ or Clang v8+. If using GCC, then v11+ is required for AVX512 support</p></li>
+<li><p><a class="reference external" href="https://mesonbuild.com/">meson</a> v0.56+</p></li>
+<li><p><a class="reference external" href="https://ninja-build.org/">ninja</a> v1.10+ (may work with older versions)</p></li>
+<li><p><a class="reference external" href="https://www.python.org/">python</a> 3.7+</p></li>
+<li><p><a class="reference external" href="https://github.com/ebiggers/libdeflate/">libdeflate</a> v1.7+ (may work with older versions)</p></li>
+<li><p><a class="reference external" href="https://github.com/intel/isa-l/">isa-l</a> v2.30+</p></li>
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/">Sphinx</a> is required to build the man page (on by default) and the full documentation (off by default)</p></li>
+</ul>
+<p>Of these dependencies, only libdeflate and isa-l are required to run AdapterRemoval once it has been installed.</p>
+<ul>
+<li><p><strong>Debian</strong> and related distributions:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo apt-get install build-essential meson ninja-build libdeflate-dev libisal-dev python3 python3-sphinx pkgconf</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>OSX</strong>, requires <a class="reference external" href="https://brew.sh">Homebrew</a> to install the dependencies:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">brew install llvm meson ninja isa-l libdeflate sphinx-doc pkgconf</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Windows</strong>, requires <a class="reference external" href="https://www.msys2.org/">MSYS2</a> with an UCRT64 environment:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pacman -S make mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-isa-l mingw-w64-ucrt-x86_64-libdeflate mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-sphinx</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="building-adapterremoval">
+<h3>Building AdapterRemoval<a class="headerlink" href="#building-adapterremoval" title="Link to this heading">¶</a></h3>
+<p>To compile AdapterRemoval, first download and unpack the newest release from GitHub, and then run <code class="docutils literal notranslate"><span class="pre">make</span></code> in the resulting directory:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">wget -O adapterremoval-3.0.2.tar.gz https://github.com/MikkelSchubert/adapterremoval/archive/v3.0.2.tar.gz</span>
+<span class="go">tar xvzf adapterremoval-3.0.2.tar.gz</span>
+<span class="go">cd adapterremoval-3.0.2</span>
+<span class="go">make setup</span>
+<span class="go">make</span>
+</pre></div>
+</div>
+<p>It is furthermore recommended to run the test-suite to verify that AdapterRemoval works correctly on your system:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">make tests</span>
+</pre></div>
+</div>
+<p>The resulting <code class="docutils literal notranslate"><span class="pre">adapterremoval3</span></code> executable is located in the <code class="docutils literal notranslate"><span class="pre">build/src</span></code> subdirectory, and can be run as-is. It is also possible to perform a system-wide installation of the AdapterRemoval executable, man-page, and examples using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo make install</span>
+</pre></div>
+</div>
+<section id="build-options">
+<h4>Build options<a class="headerlink" href="#build-options" title="Link to this heading">¶</a></h4>
+<p>The following options may be passed to <code class="docutils literal notranslate"><span class="pre">make</span></code> when building AdapterRemoval. For example, to build AdapterRemoval without the man page, thereby removing the dependency on Sphinx:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">make setup MANPAGE=disabled</span>
+<span class="go">make</span>
+</pre></div>
+</div>
+<p><strong>Core options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MANPAGE=enabled</span></code> / <code class="docutils literal notranslate"><span class="pre">MANPAGE=disabled</span></code> / <code class="docutils literal notranslate"><span class="pre">MANPAGE=auto</span></code> to enable or disable building of the man page. Requires Sphinx. If set to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, the man page will only be built if Sphinx is available. Defaults to <code class="docutils literal notranslate"><span class="pre">enabled</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DOCS=enabled</span></code> / <code class="docutils literal notranslate"><span class="pre">DOCS=disabled</span></code> / <code class="docutils literal notranslate"><span class="pre">DOCS=auto</span></code> to enable or disable building of the full documentation available at <a class="reference external" href="https://adapterremoval.readthedocs.org">https://adapterremoval.readthedocs.org</a>. Requires Sphinx. If set to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, the documentation page will only be built if Sphinx is available. Defaults to <code class="docutils literal notranslate"><span class="pre">disabled</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">STATIC=true</span></code> or <code class="docutils literal notranslate"><span class="pre">STATIC=false</span></code> to build statically or dynamically linked binary. Static libraries must be available to build a static binary. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HARDEN=true</span></code> / <code class="docutils literal notranslate"><span class="pre">HARDEN=false</span></code> to enable / disable additional hardening flags during compilation. In some cases it may be necessary to disable these, if the build-system also sets hardening flags. Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PREFIX=/path/to/prefix</span></code> is passed to the meson using the <code class="docutils literal notranslate"><span class="pre">--prefix</span></code> option. Is not set by default.</p></li>
+</ul>
+<p><strong>Development and experimental options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">COVERAGE=true</span></code> / <code class="docutils literal notranslate"><span class="pre">COVERAGE=false</span></code> to include coverage instrumentation in the build. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DEBUG=true</span></code> / <code class="docutils literal notranslate"><span class="pre">DEBUG=false</span></code> to toggle runtime POSIX asserts. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>, unless <code class="docutils literal notranslate"><span class="pre">COVERAGE</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LTO=true</span></code> / <code class="docutils literal notranslate"><span class="pre">LTO=false</span></code> to toggle link-time optimization (experimental). Causes irreproducible builds and possibly other issues. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LTO_MODE=thin</span></code> / <code class="docutils literal notranslate"><span class="pre">LTO_MODE=default</span></code> to select the link-time optimization mode. <code class="docutils literal notranslate"><span class="pre">thin</span></code> is recommended, but older systems may need to use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">LTO_MODE=default</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">thin</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UV=enabled</span></code> / <code class="docutils literal notranslate"><span class="pre">UV=disabled</span></code> / <code class="docutils literal notranslate"><span class="pre">UV=auto</span></code> to select whether or not <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> should be used to install optional requirements for running regression tests (<a class="reference external" href="https://github.com/horejsek/python-fastjsonschema">fastjsonschema</a>). Defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, which uses <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">&gt;=</span> <span class="pre">0.5.17</span></code> if it is available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SANITIZE=true</span></code> / <code class="docutils literal notranslate"><span class="pre">SANITIZE=false</span></code> to enable address and undefined behavior sanitation at runtime. This has a significant performance overhead. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AdapterRemoval</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detailed_overview.html">Detailed overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_and_output.html">Input and output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating.html">Migrating from older versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manpage.html">AdapterRemoval manpage</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">AdapterRemoval</a></li>
+      <li>Next: <a href="getting_started.html" title="next chapter">Getting started</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Mikkel Schubert; Stinus Lindgreen.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

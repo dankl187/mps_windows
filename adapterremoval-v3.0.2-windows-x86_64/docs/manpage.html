@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>AdapterRemoval manpage &#8212; AdapterRemoval 3.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Migrating from older versions" href="migrating.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="adapterremoval-manpage">
+<h1>AdapterRemoval manpage<a class="headerlink" href="#adapterremoval-manpage" title="Link to this heading">¶</a></h1>
+<section id="synopsis">
+<h2>Synopsis<a class="headerlink" href="#synopsis" title="Link to this heading">¶</a></h2>
+<p><strong>adapterremoval3</strong> [<em>options</em>...] --in-file1 &lt;<em>filenames</em>&gt; [--in-file2 &lt;<em>filenames</em>&gt;]</p>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p><strong class="program">adapterremoval3</strong> removes residual adapter sequences from single-end (SE) or paired-end (PE) FASTQ reads, optionally trimming Ns and low quality bases and/or merging overlapping paired-end mates into one read. Low quality reads are filtered based on the resulting length and the number of ambiguous nucleotides (<code class="docutils literal notranslate"><span class="pre">N</span></code>) present following trimming. These operations may be combined with simultaneous demultiplexing using 5' barcode sequences. Reports containing statistics and plots in HTML and JSON format are generated after each run.</p>
+<p>Alternatively, <code class="docutils literal notranslate"><span class="pre">adapterremoval3</span></code> may perform a report-only analysis of the input data, including the reconstruction of a consensus adapter sequences from paired-end data.</p>
+<p>If you use this program, please cite the paper:</p>
+<blockquote>
+<div><p>Schubert, Lindgreen, and Orlando (2016). AdapterRemoval v2: rapid adapter trimming, identification, and read merging. BMC Research Notes, 12;9(1):88</p>
+<p><a class="reference external" href="http://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-1900-2">http://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-1900-2</a></p>
+</div></blockquote>
+<p>For detailed documentation, please see</p>
+<blockquote>
+<div><p><a class="reference external" href="http://adapterremoval.readthedocs.io/">http://adapterremoval.readthedocs.io/</a></p>
+</div></blockquote>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h2>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-h">
+<span id="cmdoption-adapterremoval3-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-h" title="Link to this definition">¶</a></dt>
+<dd><p>Display summary of command-line options.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-v">
+<span id="cmdoption-adapterremoval3-version"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-v" title="Link to this definition">¶</a></dt>
+<dd><p>Print the version string.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-licenses">
+<span class="sig-name descname"><span class="pre">--licenses</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-licenses" title="Link to this definition">¶</a></dt>
+<dd><p>Print licenses for this software as well as for dependencies used by AdapterRemoval.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-threads">
+<span class="sig-name descname"><span class="pre">--threads</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-threads" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum number of threads. Defaults to 2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-simd">
+<span class="sig-name descname"><span class="pre">--simd</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-simd" title="Link to this definition">¶</a></dt>
+<dd><p>Selects the preferred SIMD instruction. Possible values are none, SSE2, AVX2, AVX512, and NEON. Options may be unavailable depending on the current system and depending on the compiler used to build AdapterRemoval. By default, AdapterRemoval will attempt to select the most appropriate instruction set for the input data.</p>
+</dd></dl>
+
+<section id="input-files">
+<h3>Input files<a class="headerlink" href="#input-files" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-in-file1">
+<span id="cmdoption-adapterremoval3-in-file2"></span><span class="sig-name descname"><span class="pre">--in-file1</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span> <span class="pre">[filenames...]</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--in-file2</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span> <span class="pre">[filenames...]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-in-file1" title="Link to this definition">¶</a></dt>
+<dd><p>Read FASTQ mate 1 and mate 2 reads from one or more files, either uncompressed or gzip compressed.  The <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> and <code class="docutils literal notranslate"><span class="pre">--interleaved-input</span></code> options may be used to enable reading of interleaved reads from the files specified with <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code> is not used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-head">
+<span class="sig-name descname"><span class="pre">--head</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-head" title="Link to this definition">¶</a></dt>
+<dd><p>If set, AdapterRemoval will process only the first N reads/pairs of reads in the input, in single-end and paired-end mode, respectively. Accepts suffixes K (thousands), M (millions), and G (billions). By default, all data is processed.</p>
+</dd></dl>
+
+</section>
+<section id="output-file-options">
+<h3>Output file options<a class="headerlink" href="#output-file-options" title="Link to this heading">¶</a></h3>
+<p>Output files for AdapterRemoval may be specified either via the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option, which assigns default filenames to output, and/or via the individual <code class="docutils literal notranslate"><span class="pre">--out</span></code> options to set or override the output filename for a given output type. The same filename may be used for multiple <code class="docutils literal notranslate"><span class="pre">--out</span></code> options, in which case all of those reads are written to that file in input order.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">/dev/stdin</span></code> to read from standard input, use <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code> to write to standard output, and use <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code> to disable the generation of those types of reads. Statistics are still collected for read types written to <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code>, but the data itself is not serialized or compressed, in order to save time.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-prefix">
+<span class="sig-name descname"><span class="pre">--out-prefix</span></span><span class="sig-prename descclassname"> <span class="pre">path</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-prefix" title="Link to this definition">¶</a></dt>
+<dd><p>Prefix for the output files for which no filename was set using the corresponding options below, except for <code class="docutils literal notranslate"><span class="pre">--out-discarded</span></code> which is not saved by default. If this option is not used, then files for which no <code class="docutils literal notranslate"><span class="pre">--out</span></code> option was set will not be saved.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-file1">
+<span id="cmdoption-adapterremoval3-out-file2"></span><span class="sig-name descname"><span class="pre">--out-file1</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--out-file2</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-file1" title="Link to this definition">¶</a></dt>
+<dd><p>Output files containing trimmed mate 1 reads and mate 2 reads. If interleaved output is enabled, via the <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> or the <code class="docutils literal notranslate"><span class="pre">--interleaved-output</span></code> options, then only <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code> is used, and this file will contain both mate 1 and mate 2 reads.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-merged">
+<span class="sig-name descname"><span class="pre">--out-merged</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-merged" title="Link to this definition">¶</a></dt>
+<dd><p>When used with <code class="docutils literal notranslate"><span class="pre">--merge</span></code>, this file contains overlapping mate-pairs which have been merged into a single read. Setting this option in demultiplexing mode overrides <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> for just this read type.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-singleton">
+<span class="sig-name descname"><span class="pre">--out-singleton</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-singleton" title="Link to this definition">¶</a></dt>
+<dd><p>Output file containing orphaned paired reads for which the mate has been discarded. Setting this option in demultiplexing mode overrides <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> for just this read type.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-unidentified1">
+<span id="cmdoption-adapterremoval3-out-unidentified2"></span><span class="sig-name descname"><span class="pre">--out-unidentified1</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--out-unidentified2</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-unidentified1" title="Link to this definition">¶</a></dt>
+<dd><p>In demultiplexing mode, reads that could not be assigned to a single sample are written to these files. In interleaved mode, both mate 1 and mate 2 reads are written to <code class="docutils literal notranslate"><span class="pre">--out-unidentified1</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-discarded">
+<span class="sig-name descname"><span class="pre">--out-discarded</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-discarded" title="Link to this definition">¶</a></dt>
+<dd><p>Contains reads discarded due to the <code class="docutils literal notranslate"><span class="pre">--min-length</span></code>, <code class="docutils literal notranslate"><span class="pre">--max-length</span></code>, <code class="docutils literal notranslate"><span class="pre">--max-ns</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-mean-quality</span></code>, or <code class="docutils literal notranslate"><span class="pre">--min-complexity</span></code> options. This option is not enabled by setting <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-json">
+<span id="cmdoption-adapterremoval3-out-html"></span><span class="sig-name descname"><span class="pre">--out-json</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--out-html</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-json" title="Link to this definition">¶</a></dt>
+<dd><p>Reports in JSON/HTML format containing information about the parameters used in the run, overall statistics on the reads before and after trimming, demultiplexing statistics, and the results of any analyses carried out during the run. Analyses include insert inference of sizes, duplication levels, and any inferred consensus adapter sequences.</p>
+</dd></dl>
+
+</section>
+<section id="fastq-options">
+<h3>FASTQ options<a class="headerlink" href="#fastq-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-quality-format">
+<span class="sig-name descname"><span class="pre">--quality-format</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-quality-format" title="Link to this definition">¶</a></dt>
+<dd><p>The Phred quality score encoding used in input reads - either <code class="docutils literal notranslate"><span class="pre">64</span></code> for Phred+64 (Illumina 1.3+ and 1.5+) or <code class="docutils literal notranslate"><span class="pre">33</span></code> for Phred+33 (Illumina 1.8+, BGISeq, and more). In addition, the value <code class="docutils literal notranslate"><span class="pre">solexa</span></code> may be used to specify reads with Solexa encoded scores. The <code class="docutils literal notranslate"><span class="pre">sam</span></code> format may be used for Phred+33 encoded data with quality scores higher than that normally produced by sequencing machines. Defaults to <code class="docutils literal notranslate"><span class="pre">33</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-mate-separator">
+<span class="sig-name descname"><span class="pre">--mate-separator</span></span><span class="sig-prename descclassname"> <span class="pre">separator</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-mate-separator" title="Link to this definition">¶</a></dt>
+<dd><p>Character separating the mate number (<code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">2</span></code>) from the read name in FASTQ records, such as <code class="docutils literal notranslate"><span class="pre">&#64;my-read/1</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;my-read/2</span></code>. This is typically either <code class="docutils literal notranslate"><span class="pre">/</span></code> or <code class="docutils literal notranslate"><span class="pre">.</span></code>. By default, AdapterRemoval will attempt to infer this from the input data.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-normalize-mate-separator">
+<span class="sig-name descname"><span class="pre">--normalize-mate-separator</span></span><span class="sig-prename descclassname"> <span class="pre">[value]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-normalize-mate-separator" title="Link to this definition">¶</a></dt>
+<dd><p>Replace the mate separator in FASTQ reads with the specified character (<code class="docutils literal notranslate"><span class="pre">/</span></code> if no character is specified). If reads do not contain mate numbers, these are added. If <code class="docutils literal notranslate"><span class="pre">strip</span></code>, the mate separator is stripped from FASTQ reads. By default, mate separator is not normalized.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-interleaved-input">
+<span class="sig-name descname"><span class="pre">--interleaved-input</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-interleaved-input" title="Link to this definition">¶</a></dt>
+<dd><p>Enable reading of interleaved FASTQ reads from the files specified with <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code>. Defaults to off.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-interleaved-output">
+<span class="sig-name descname"><span class="pre">--interleaved-output</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-interleaved-output" title="Link to this definition">¶</a></dt>
+<dd><p>Write paired-end reads to the file specified by <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code>, interleaving mate 1 and mate 2 reads. Defaults to off.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-interleaved">
+<span class="sig-name descname"><span class="pre">--interleaved</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-interleaved" title="Link to this definition">¶</a></dt>
+<dd><p>Enables <code class="docutils literal notranslate"><span class="pre">--interleaved-input</span></code> and <code class="docutils literal notranslate"><span class="pre">--interleaved-output</span></code>. Defaults to off.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-mask-degenerate-bases">
+<span class="sig-name descname"><span class="pre">--mask-degenerate-bases</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-mask-degenerate-bases" title="Link to this definition">¶</a></dt>
+<dd><p>Mask degenerate/ambiguous IUPAC encoded bases (B/D/H/K/M/N/R/S/V/W/Y) in the input by replacing them with an <code class="docutils literal notranslate"><span class="pre">N</span></code>; if this option is not used, AdapterRemoval will abort upon encountering degenerate bases in the input.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-convert-uracils">
+<span class="sig-name descname"><span class="pre">--convert-uracils</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-convert-uracils" title="Link to this definition">¶</a></dt>
+<dd><p>Convert uracils (U) to thymine (T) in input reads; if this option is not used, AdapterRemoval will abort upon encountering uracils in the input.</p>
+</dd></dl>
+
+</section>
+<section id="output-compression-options">
+<h3>Output compression options<a class="headerlink" href="#output-compression-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-out-format">
+<span class="sig-name descname"><span class="pre">--out-format</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-out-format" title="Link to this definition">¶</a></dt>
+<dd><p>Selects the default output format for files: <code class="docutils literal notranslate"><span class="pre">fastq</span></code> for uncompressed FASTQ reads, <code class="docutils literal notranslate"><span class="pre">fastq.gz</span></code> for gzip compressed FASTQ reads, <code class="docutils literal notranslate"><span class="pre">sam</span></code> for uncompressed SAM records, <code class="docutils literal notranslate"><span class="pre">sam.gz</span></code> for gzip compressed SAM records, <code class="docutils literal notranslate"><span class="pre">bam</span></code> for BGZF compressed BAM records, and <code class="docutils literal notranslate"><span class="pre">ubam</span></code> for uncompressed BAM records. Setting a <code class="docutils literal notranslate"><span class="pre">--out</span></code> option overrides this option based on the extension used (except <code class="docutils literal notranslate"><span class="pre">.ubam</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">fastq.gz</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-stdout-format">
+<span class="sig-name descname"><span class="pre">--stdout-format</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-stdout-format" title="Link to this definition">¶</a></dt>
+<dd><p>Selects the output format for data written to STDOUT, i.e. when writing to <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code>; choices are the same as for --out-format. By default, the uncompressed version of the current <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> is used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-read-group">
+<span id="cmdoption-adapterremoval3-arg-..."></span><span class="sig-name descname"><span class="pre">--read-group</span></span><span class="sig-prename descclassname"> <span class="pre">[n</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">...]</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-read-group" title="Link to this definition">¶</a></dt>
+<dd><p>Add read-group (RG) information to SAM/BAM output. Tags can either be specified as individual arguments, i.e. <code class="docutils literal notranslate"><span class="pre">--read-group</span> <span class="pre">ID:foo</span> <span class="pre">SM:bar</span></code>, or as a string containing tags separated by tabs. Normally the latter can be written as <code class="docutils literal notranslate"><span class="pre">--read-group</span> <span class="pre">$'ID:DS-1\tSM:TK-421\tPL:ILLUMINA'</span></code> on the command-line. If the ID tag is not provided, the default ID <code class="docutils literal notranslate"><span class="pre">1</span></code> will be used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-compression-level">
+<span class="sig-name descname"><span class="pre">--compression-level</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-compression-level" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the compression level for compressed output. Valid values are 0 to 12: Level 0 is uncompressed but includes gzip headers/checksums, level 1 is streamed for FASTQ and SAM output, which may be required for compatibility in rare cases. FASTQ and SAM output with compression levels 2 to 12, and BAM output, is block compressed using the gzip compatible BGZF format. Lower this value to 1 for a 50-100% increase in throughput, at the cost of 10-20% larger output files. Defaults to compression level 4.</p>
+</dd></dl>
+
+</section>
+<section id="adapter-selection">
+<h3>Adapter selection<a class="headerlink" href="#adapter-selection" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter1">
+<span class="sig-name descname"><span class="pre">--adapter1</span></span><span class="sig-prename descclassname"> <span class="pre">adapter</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter1" title="Link to this definition">¶</a></dt>
+<dd><p>Adapter sequence expected to be found in mate 1 reads, specified in read direction. For a detailed description of how to provide the appropriate adapter sequences, see the &quot;Adapters&quot; section of the online documentation. Default is <code class="docutils literal notranslate"><span class="pre">AGATCGGAAGAGCACACGTCTGAACTCCAGTCA</span></code>, intended for Illumina TruSeq and similar data.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter2">
+<span class="sig-name descname"><span class="pre">--adapter2</span></span><span class="sig-prename descclassname"> <span class="pre">adapter</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter2" title="Link to this definition">¶</a></dt>
+<dd><p>Adapter sequence expected to be found in mate 2 reads, specified in read direction. For a detailed description of how to provide the appropriate adapter sequences, see the &quot;Adapters&quot; section of the online documentation. Default is <code class="docutils literal notranslate"><span class="pre">AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT</span></code>, intended for Illumina TruSeq and similar data.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter-table">
+<span class="sig-name descname"><span class="pre">--adapter-table</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter-table" title="Link to this definition">¶</a></dt>
+<dd><p>Read one or more adapter sequences from a table. The first two columns (separated by whitespace) of each line in the file are expected to correspond to values passed to --adapter1 and --adapter2. In single-end mode, only column one is required. Lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored. When multiple rows are found in the table, AdapterRemoval will try each adapter (pair), and select the best aligning adapters for each FASTQ read processed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter-selection">
+<span class="sig-name descname"><span class="pre">--adapter-selection</span></span><span class="sig-prename descclassname"> <span class="pre">strategy</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter-selection" title="Link to this definition">¶</a></dt>
+<dd><p>How to select the adapter sequences to trim: If <code class="docutils literal notranslate"><span class="pre">auto</span></code>, attempt to determine adapter sequences from the input data; if <code class="docutils literal notranslate"><span class="pre">manual</span></code>, use the user-defined adapter sequences; if <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, trim based on overlap analyses (PE only) and/or 5' barcodes (SE if mate 2 barcodes are provided); and if <code class="docutils literal notranslate"><span class="pre">none</span></code>, assume that the data contains no adapter sequences. Possible values are <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">manual</span></code>, <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, and <code class="docutils literal notranslate"><span class="pre">none</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, unless <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code>, <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code>, or <code class="docutils literal notranslate"><span class="pre">--adapter-table</span></code> are used, in which case the default is <code class="docutils literal notranslate"><span class="pre">manual</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter-fallback">
+<span class="sig-name descname"><span class="pre">--adapter-fallback</span></span><span class="sig-prename descclassname"> <span class="pre">strategy</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter-fallback" title="Link to this definition">¶</a></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span> <span class="pre">auto</span></code> is used and no adapter sequences could be identified, either <code class="docutils literal notranslate"><span class="pre">abort</span></code> the program, or fall back to one of the other possible <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span></code> options. Possible values are <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, <code class="docutils literal notranslate"><span class="pre">none</span></code>, and <code class="docutils literal notranslate"><span class="pre">abort</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">undefined</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-adapter-database">
+<span class="sig-name descname"><span class="pre">--adapter-database</span></span><span class="sig-prename descclassname"> <span class="pre">format</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-adapter-database" title="Link to this definition">¶</a></dt>
+<dd><p>Output the adapters used for automatic adapter selection to STDOUT, either as a <code class="docutils literal notranslate"><span class="pre">tsv</span></code> table or in <code class="docutils literal notranslate"><span class="pre">json</span></code> format. If an adapter 2 sequence is not listed, then AdapterRemoval uses the same sequence for both adapter 1 and adapter 2.</p>
+</dd></dl>
+
+</section>
+<section id="fastq-processing-options">
+<h3>FASTQ processing options<a class="headerlink" href="#fastq-processing-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-min-overlap">
+<span class="sig-name descname"><span class="pre">--min-overlap</span></span><span class="sig-prename descclassname"> <span class="pre">length</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-min-overlap" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum amount of bases that must overlap, not counting ambiguous nucleotides (Ns), for a single-end or paired-end alignment to be considered valid. For paired-end mode, this is important when no adapters were specified or detected, to prevent trimming of short palindromes. Defaults to 1 in single-end mode, and <code class="docutils literal notranslate"><span class="pre">--merge-threshold</span></code> in paired-end mode.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-mismatch-rate">
+<span class="sig-name descname"><span class="pre">--mismatch-rate</span></span><span class="sig-prename descclassname"> <span class="pre">rate</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-mismatch-rate" title="Link to this definition">¶</a></dt>
+<dd><p>Max error-rate allowed when aligning reads and/or adapters. The default
+value of 0.1667 corresponds to approximately 1 error every 6 bases.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-shift">
+<span class="sig-name descname"><span class="pre">--shift</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-shift" title="Link to this definition">¶</a></dt>
+<dd><p>To allow for missing bases in the 5' end of the read, the program can let the alignment slip <code class="docutils literal notranslate"><span class="pre">--shift</span></code> bases in the 5' end. This corresponds to starting the alignment maximum <code class="docutils literal notranslate"><span class="pre">--shift</span></code> nucleotides into read 2 (for paired-end) or the adapter (for single-end). The default is 2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-merge">
+<span class="sig-name descname"><span class="pre">--merge</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-merge" title="Link to this definition">¶</a></dt>
+<dd><p>In paired-end mode, merge overlapping mates into a single read and recalculate the quality scores of overlapping bases. The overlap needs to be at least <code class="docutils literal notranslate"><span class="pre">--merge-threshold</span></code> nucleotides, with a maximum number of mismatches determined by <code class="docutils literal notranslate"><span class="pre">--mismatch-rate</span></code>. This option has no effect in single-end mode.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-merge-threshold">
+<span class="sig-name descname"><span class="pre">--merge-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">length</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-merge-threshold" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum overlap between mate 1 and mate 2 before the reads are merged into one, potentially longer sequence, when merging is enabled. Does not include ambiguous nucleotides (Ns). Default is 11 bases.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-merge-strategy">
+<span class="sig-name descname"><span class="pre">--merge-strategy</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-merge-strategy" title="Link to this definition">¶</a></dt>
+<dd><p>Determines how to assign quality scores to matching/mismatching bases during read merging. The <code class="docutils literal notranslate"><span class="pre">maximum</span></code> strategy uses <code class="docutils literal notranslate"><span class="pre">Q=max(Q1,</span> <span class="pre">Q2)</span></code> for matches while the <code class="docutils literal notranslate"><span class="pre">additive</span></code> strategy uses <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">Q1</span> <span class="pre">+</span> <span class="pre">Q2</span></code>. Both strategies use <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">abs(Q1</span> <span class="pre">-</span> <span class="pre">Q2)</span></code> for mismatches, and picks the highest quality base, unless the qualities are the same in which case <code class="docutils literal notranslate"><span class="pre">N</span></code> is used. Possible values are maximum, and additive. Defaults to <code class="docutils literal notranslate"><span class="pre">maximum</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-merge-quality-max">
+<span class="sig-name descname"><span class="pre">--merge-quality-max</span></span><span class="sig-prename descclassname"> <span class="pre">phred</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-merge-quality-max" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the maximum Phred score for re-calculated quality scores when read merging is enabled with the <code class="docutils literal notranslate"><span class="pre">additive</span></code> merging strategy. The value must be in the range 0 to 93, corresponding to Phred+33 encoded values of <code class="docutils literal notranslate"><span class="pre">!</span></code> to <code class="docutils literal notranslate"><span class="pre">~</span></code>. Defaults to 41.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-prefix-read1">
+<span class="sig-name descname"><span class="pre">--prefix-read1</span></span><span class="sig-prename descclassname"> <span class="pre">X</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-prefix-read1" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the specified prefix to the names of mate 1 reads. Defaults to no prefix.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-prefix-read2">
+<span class="sig-name descname"><span class="pre">--prefix-read2</span></span><span class="sig-prename descclassname"> <span class="pre">X</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-prefix-read2" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the specified prefix to the names of mate 2 reads. Defaults to no prefix.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-prefix-merged">
+<span class="sig-name descname"><span class="pre">--prefix-merged</span></span><span class="sig-prename descclassname"> <span class="pre">X</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-prefix-merged" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the specified prefix to merged read names. Defaults to no prefix.</p>
+</dd></dl>
+
+</section>
+<section id="quality-trimming-options">
+<h3>Quality trimming options<a class="headerlink" href="#quality-trimming-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-pre-trim3p">
+<span class="sig-name descname"><span class="pre">--pre-trim3p</span></span><span class="sig-prename descclassname"> <span class="pre">n</span> <span class="pre">[n]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-pre-trim3p" title="Link to this definition">¶</a></dt>
+<dd><p>Trim the 3' of reads by a fixed amount after demultiplexing but before removing adapters. Specify one value to trim mate 1 and mate 2 reads the same amount, or two values separated by a space to trim each mate a different amount. Off by default.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-post-trim5p">
+<span class="sig-name descname"><span class="pre">--post-trim5p</span></span><span class="sig-prename descclassname"> <span class="pre">n</span> <span class="pre">[n]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-post-trim5p" title="Link to this definition">¶</a></dt>
+<dd><p>Trim the 5' of reads by a fixed amount after removing adapters, but before carrying out quality based trimming. See <code class="docutils literal notranslate"><span class="pre">--pre-trim3p</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-post-trim3p">
+<span class="sig-name descname"><span class="pre">--post-trim3p</span></span><span class="sig-prename descclassname"> <span class="pre">n</span> <span class="pre">[n]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-post-trim3p" title="Link to this definition">¶</a></dt>
+<dd><p>Trim the 3' of reads by a fixed amount after removing adapters, but before carrying out quality based trimming. See <code class="docutils literal notranslate"><span class="pre">--pre-trim3p</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-quality-trimming">
+<span class="sig-name descname"><span class="pre">--quality-trimming</span></span><span class="sig-prename descclassname"> <span class="pre">method</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-quality-trimming" title="Link to this definition">¶</a></dt>
+<dd><p>The method used for performing quality trimming: <code class="docutils literal notranslate"><span class="pre">none</span></code> to disable quality trimming, <code class="docutils literal notranslate"><span class="pre">mott</span></code> to enable trimming using the modified Mott's algorithm, <code class="docutils literal notranslate"><span class="pre">window</span></code> to perform window-based quality trimming, and <code class="docutils literal notranslate"><span class="pre">per-base</span></code> to perform base-by-base trimming of low-quality bases and Ns (if enabled). Defaults to Mott's algorithm.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-trim-mott-rate">
+<span class="sig-name descname"><span class="pre">--trim-mott-rate</span></span><span class="sig-prename descclassname"> <span class="pre">rate</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-trim-mott-rate" title="Link to this definition">¶</a></dt>
+<dd><p>The inclusive threshold value used when trimming low-quality bases using the modified Mott's algorithm. A value of zero disables trimming. Defaults to 0.05.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-trim-windows">
+<span class="sig-name descname"><span class="pre">--trim-windows</span></span><span class="sig-prename descclassname"> <span class="pre">size</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-trim-windows" title="Link to this definition">¶</a></dt>
+<dd><p>Specifies the initial size of the dynamic window, when window-based quality trimming is enabled via <code class="docutils literal notranslate"><span class="pre">--quality-trimming</span> <span class="pre">window</span></code>. Trimming is performed using a sliding window-based approach inspired by <strong class="program">sickle</strong>. See the &quot;Window-based quality trimming&quot; section of the manual page for a description of this algorithm. Defaults to 0.1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-trim-min-quality">
+<span class="sig-name descname"><span class="pre">--trim-min-quality</span></span><span class="sig-prename descclassname"> <span class="pre">minimum</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-trim-min-quality" title="Link to this definition">¶</a></dt>
+<dd><p>Inclusive minimum quality used when trimming low-quality bases with <code class="docutils literal notranslate"><span class="pre">--quality-trimming</span></code> options <code class="docutils literal notranslate"><span class="pre">window</span></code> and <code class="docutils literal notranslate"><span class="pre">per-base</span></code>. Defaults to 2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-pre-trim-polyx">
+<span class="sig-name descname"><span class="pre">--pre-trim-polyx</span></span><span class="sig-prename descclassname"> <span class="pre">[nucleotides...]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-pre-trim-polyx" title="Link to this definition">¶</a></dt>
+<dd><p>Enable trimming of poly-X tails prior to read alignment and adapter trimming. Zero or more nucleotides (A, C, G, T) may be specified, separated by spaces, with zero nucleotides corresponding to all of A, C, G, and T. If set to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, AdapterRemoval automatically trims poly-Gs if read names indicate that a two-color Illumina platforms was used. If set to <code class="docutils literal notranslate"><span class="pre">off</span></code>, no pre-trimming of poly-X tails is performed. Default is <code class="docutils literal notranslate"><span class="pre">auto</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-post-trim-polyx">
+<span class="sig-name descname"><span class="pre">--post-trim-polyx</span></span><span class="sig-prename descclassname"> <span class="pre">[nucleotides...]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-post-trim-polyx" title="Link to this definition">¶</a></dt>
+<dd><p>Enable trimming of poly-X tails after read alignment and adapter trimming/merging, but before trimming of low-quality bases. Merged reads are not trimmed by this option, since both ends are derived from the 5' of reads. See <code class="docutils literal notranslate"><span class="pre">--pre-trim-polyx</span></code>. Off by default.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-trim-polyx-threshold">
+<span class="sig-name descname"><span class="pre">--trim-polyx-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-trim-polyx-threshold" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum length of a poly-X tail, when either <code class="docutils literal notranslate"><span class="pre">--pre-trim-polyx</span></code> or <code class="docutils literal notranslate"><span class="pre">--post-trim-polyx</span></code> is enabled. Defaults to 10 nucleotides.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-preserve5p">
+<span class="sig-name descname"><span class="pre">--preserve5p</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-preserve5p" title="Link to this definition">¶</a></dt>
+<dd><p>If set, bases at the 5' will not be trimmed by <code class="docutils literal notranslate"><span class="pre">mott</span></code>, <code class="docutils literal notranslate"><span class="pre">window</span></code>, or <code class="docutils literal notranslate"><span class="pre">per-base</span></code> trimming, except if the entire read consists of low-quality bases. Merged reads will not be quality trimmed when this option is enabled due to the 3' ends being located inside the reads or overlapping the 5' of the source sequences.</p>
+</dd></dl>
+
+</section>
+<section id="filtering-options">
+<h3>Filtering options<a class="headerlink" href="#filtering-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-max-ns">
+<span class="sig-name descname"><span class="pre">--max-ns</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-max-ns" title="Link to this definition">¶</a></dt>
+<dd><p>Discard reads containing more than <code class="docutils literal notranslate"><span class="pre">--max-ns</span></code> ambiguous bases (<code class="docutils literal notranslate"><span class="pre">N</span></code>) after trimming. Default is no maximum.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-max-ns-fraction">
+<span class="sig-name descname"><span class="pre">--max-ns-fraction</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-max-ns-fraction" title="Link to this definition">¶</a></dt>
+<dd><p>Discard reads where the number of ambiguous bases (<code class="docutils literal notranslate"><span class="pre">N</span></code>) divided by the read-length after trimming is greater than the specified value. Default is no maximum.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-min-length">
+<span class="sig-name descname"><span class="pre">--min-length</span></span><span class="sig-prename descclassname"> <span class="pre">length</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-min-length" title="Link to this definition">¶</a></dt>
+<dd><p>Reads shorter than this length are discarded following trimming. Defaults to 15.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-max-length">
+<span class="sig-name descname"><span class="pre">--max-length</span></span><span class="sig-prename descclassname"> <span class="pre">length</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-max-length" title="Link to this definition">¶</a></dt>
+<dd><p>Reads longer than this length are discarded following trimming. Defaults to no maximum.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-min-mean-quality">
+<span class="sig-name descname"><span class="pre">--min-mean-quality</span></span><span class="sig-prename descclassname"> <span class="pre">X</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-min-mean-quality" title="Link to this definition">¶</a></dt>
+<dd><p>Reads with a mean quality score less than this value following trimming are discarded. The value must be in the range 0 to 93, corresponding to Phred+33 encoded values of '!' to '~'. Defaults to no minimum.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-min-complexity">
+<span class="sig-name descname"><span class="pre">--min-complexity</span></span><span class="sig-prename descclassname"> <span class="pre">X</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-min-complexity" title="Link to this definition">¶</a></dt>
+<dd><p>Reads with a sequence quality less than this value after trimming are discarded. Complexity is measured as the fraction of positions that differ from the previous position, not counting ambiguous bases (<code class="docutils literal notranslate"><span class="pre">N</span></code>). A suggested value is 0.3. Defaults to no minimum.</p>
+</dd></dl>
+
+</section>
+<section id="demultiplexing-options">
+<h3>Demultiplexing options<a class="headerlink" href="#demultiplexing-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-barcode-table">
+<span class="sig-name descname"><span class="pre">--barcode-table</span></span><span class="sig-prename descclassname"> <span class="pre">filename</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-barcode-table" title="Link to this definition">¶</a></dt>
+<dd><p>Perform demultiplexing using table of one or two fixed-length barcodes for SE or PE reads. The table is expected to contain 2 or 3 white-space separated columns, the first of which represent the name of a given sample, and the second and third of which represent the mate 1 and (optionally) the mate 2 barcode sequence. For a detailed description, see the &quot;Demultiplexing&quot; section of the online documentation.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-multiple-barcodes">
+<span class="sig-name descname"><span class="pre">--multiple-barcodes</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-multiple-barcodes" title="Link to this definition">¶</a></dt>
+<dd><p>Allow for more than one barcode (pair) for each sample. If this option is not specified, AdapterRemoval will abort if multiple barcodes/barcode pairs identify the same sample.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-barcode-orientation">
+<span class="sig-name descname"><span class="pre">--barcode-orientation</span></span><span class="sig-prename descclassname"> <span class="pre">orientation</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-barcode-orientation" title="Link to this definition">¶</a></dt>
+<dd><p>Process barcode sequences in both the barcode1-insert-barcode2 (<code class="docutils literal notranslate"><span class="pre">forward</span></code>) orientation and barcode2-insert-barcode1 (<code class="docutils literal notranslate"><span class="pre">reverse</span></code>) orientation. If <code class="docutils literal notranslate"><span class="pre">forward</span></code> or <code class="docutils literal notranslate"><span class="pre">reverse</span></code> is used, the barcode in the barcode table are assumed to be in that orientation, and the opposite sequence is generated. If <code class="docutils literal notranslate"><span class="pre">explicit</span></code> is used, the barcode table is expected to contain a 4th column specifying the orientation (<code class="docutils literal notranslate"><span class="pre">forward</span></code> or <code class="docutils literal notranslate"><span class="pre">reverse</span></code> for each barcode), and only that orientation is used. Default is <code class="docutils literal notranslate"><span class="pre">unspecified</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-normalize-orientation">
+<span class="sig-name descname"><span class="pre">--normalize-orientation</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-normalize-orientation" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse complement merged reads found to be in the reverse orientation, based on barcode orientation.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-barcode-mm">
+<span class="sig-name descname"><span class="pre">--barcode-mm</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-barcode-mm" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum <em>total</em> number of mismatches allowed, when counting mismatches in both the mate 1 and the mate 2 barcode for paired reads.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-barcode-mm-r1">
+<span class="sig-name descname"><span class="pre">--barcode-mm-r1</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-barcode-mm-r1" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum number of mismatches allowed for the mate 1 barcode; if not set, this value is equal to the <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code> value; cannot be higher than the <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code> value.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-barcode-mm-r2">
+<span class="sig-name descname"><span class="pre">--barcode-mm-r2</span></span><span class="sig-prename descclassname"> <span class="pre">n</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-barcode-mm-r2" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum number of mismatches allowed for the mate 2 barcode; if not set, this value is equal to the <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code> value; cannot be higher than the <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code> value.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-demultiplex-only">
+<span class="sig-name descname"><span class="pre">--demultiplex-only</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-demultiplex-only" title="Link to this definition">¶</a></dt>
+<dd><p>Only carry out demultiplexing using the list of barcodes supplied with --barcode-table. No other processing is done.</p>
+</dd></dl>
+
+</section>
+<section id="reporting-options">
+<h3>Reporting options<a class="headerlink" href="#reporting-options" title="Link to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-report-only">
+<span class="sig-name descname"><span class="pre">--report-only</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adapterremoval3-report-only" title="Link to this definition">¶</a></dt>
+<dd><p>Write a report of the input data without performing any processing of the FASTQ reads. In addition, attempt to build a consensus adapter sequence from fully overlapping pairs of paired-end reads. The minimum overlap is controlled by <code class="docutils literal notranslate"><span class="pre">--merge-threshold</span></code> and the result will be compared with the values set using <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code>. Default is off.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-report-title">
+<span class="sig-name descname"><span class="pre">--report-title</span></span><span class="sig-prename descclassname"> <span class="pre">title</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-report-title" title="Link to this definition">¶</a></dt>
+<dd><p>Set the title used in the HTML report. Defaults to <code class="docutils literal notranslate"><span class="pre">AdapterRemoval</span> <span class="pre">v3.0.2</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-report-sample-rate">
+<span class="sig-name descname"><span class="pre">--report-sample-rate</span></span><span class="sig-prename descclassname"> <span class="pre">x</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-report-sample-rate" title="Link to this definition">¶</a></dt>
+<dd><p>The fraction of reads to sample when generating base quality/composition curves for trimming reports. Using all data (<code class="docutils literal notranslate"><span class="pre">--report-sample-rate</span> <span class="pre">1.0</span></code>) results in an 10-30% decrease in throughput and is typically not necessary, except for tiny datasets. Default is 0.10.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-report-duplication">
+<span class="sig-name descname"><span class="pre">--report-duplication</span></span><span class="sig-prename descclassname"> <span class="pre">[n]</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-report-duplication" title="Link to this definition">¶</a></dt>
+<dd><p>FastQC based duplicate detection, based on the frequency of the first N unique sequences observed. If the option is used without an explicit value, the FastQC default of 100k unique reads is used; a value of 0 disables the analysis. Accepts suffixes K, M, and G. Default is 0.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="logging-options">
+<h2>Logging options<a class="headerlink" href="#logging-options" title="Link to this heading">¶</a></h2>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-log-level">
+<span class="sig-name descname"><span class="pre">--log-level</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-log-level" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum severity of messages to be written to stderr. Possible values are debug, info, warning, and error. Default is info.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-log-colors">
+<span class="sig-name descname"><span class="pre">--log-colors</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-log-colors" title="Link to this definition">¶</a></dt>
+<dd><p>Enable/disable the use of colors when writing log messages. If set to auto, colors will only be enabled if STDERR is a terminal and the NO_COLORS environmental variable is not set. Possible values are auto, always, and never. Defaults to auto.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adapterremoval3-log-progress">
+<span class="sig-name descname"><span class="pre">--log-progress</span></span><span class="sig-prename descclassname"> <span class="pre">name</span></span><a class="headerlink" href="#cmdoption-adapterremoval3-log-progress" title="Link to this definition">¶</a></dt>
+<dd><p>Specify the type of progress report used. If set to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, then a spinner will be used if STDERR is a terminal and the NO_COLORS environmental variable is not set, otherwise a log line will be written for every 1 million records processed. Possible values are <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">spin</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">never</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">auto</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="window-based-quality-trimming">
+<h2>Window-based quality trimming<a class="headerlink" href="#window-based-quality-trimming" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval implements sliding window-based approach to quality based base-trimming inspired by <code class="docutils literal notranslate"><span class="pre">sickle</span></code>. If <code class="docutils literal notranslate"><span class="pre">--trim-windows</span></code> is greater than or equal to 1, that number is used as the window size for all reads. If <code class="docutils literal notranslate"><span class="pre">--trim-windows</span></code> is a number greater than or equal to 0 and less than 1, then that number is multiplied by the length of individual reads to determine the window size. If the window length is zero or is greater than the current read length, then the read length is used instead.</p>
+<p>Reads are trimmed as follows for a given window size:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The new 5' is determined by locating the first window where both the average quality and the quality of the first base in the window is greater than <code class="docutils literal notranslate"><span class="pre">--trim-min-quality</span></code>.</p></li>
+<li><p>The new 3' is located by sliding the first window right, until the average quality becomes less than or equal to <code class="docutils literal notranslate"><span class="pre">--trim-min-quality</span></code>. The new 3' is placed at the last base in that window where the quality is greater than or equal to <code class="docutils literal notranslate"><span class="pre">--trim-min-quality</span></code>.</p></li>
+<li><p>If no 5' position could be determined, the read is discarded.</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="exit-status">
+<h2>Exit status<a class="headerlink" href="#exit-status" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval exits with status 0 if the program ran successfully, and with a non-zero exit code if any errors were encountered. Output from AdapterRemoval should not be used if the program returned a non-zero exit code.</p>
+</section>
+<section id="reporting-bugs">
+<h2>Reporting bugs<a class="headerlink" href="#reporting-bugs" title="Link to this heading">¶</a></h2>
+<p>Please report any bugs using the AdapterRemoval issue-tracker:</p>
+<p><a class="reference external" href="https://github.com/MikkelSchubert/adapterremoval/issues">https://github.com/MikkelSchubert/adapterremoval/issues</a></p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or at your option any later version.</p>
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License along with this program. If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AdapterRemoval</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detailed_overview.html">Detailed overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_and_output.html">Input and output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating.html">Migrating from older versions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AdapterRemoval manpage</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="migrating.html" title="previous chapter">Migrating from older versions</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Mikkel Schubert; Stinus Lindgreen.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/manpage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

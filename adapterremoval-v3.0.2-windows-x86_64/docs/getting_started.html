@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting started &#8212; AdapterRemoval 3.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Detailed overview" href="detailed_overview.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
+<section id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">¶</a></h2>
+<p>To run AdapterRemoval on single-end FASTQ data, specify the location of FASTQ file(s) using the <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> command-line option. Use the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> to specify a prefix for the names of the resulting FASTQ and report files:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1.fastq.gz \</span>
+<span class="go">    --out-prefix output</span>
+</pre></div>
+</div>
+<p>When run in this manner, AdapterRemoval will generate the files <code class="docutils literal notranslate"><span class="pre">output.fastq.gz</span></code> containing the trimmed reads, <code class="docutils literal notranslate"><span class="pre">output.html</span></code> containing a human-readable QC report, and <code class="docutils literal notranslate"><span class="pre">output.json</span></code> containing the QC report in <a class="reference external" href="https://www.json.org/">JSON</a> format.</p>
+<p>To run AdapterRemoval on paired-end FASTQ data, specify the location of the mate 1 and mate 2 FASTQ files using the <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code> command-line options. Overlapping reads may optionally be merged using the <code class="docutils literal notranslate"><span class="pre">--merge</span></code> option:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1.fastq.gz \</span>
+<span class="go">    --in-file2 reads_2.fastq.gz \</span>
+<span class="go">    --out-prefix output \</span>
+<span class="go">    --merge</span>
+</pre></div>
+</div>
+<p>When run in this manner, AdapterRemoval will save the QC reports as described above, while FASTQ reads will be saved to <code class="docutils literal notranslate"><span class="pre">output.r1.fastq.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">output.r2.fastq.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">output.merged.fastq.gz</span></code>, and <code class="docutils literal notranslate"><span class="pre">output.singleton.fastq.gz</span></code>. The <code class="docutils literal notranslate"><span class="pre">singleton</span></code> file contains reads from pairs in which one of the reads was discarded.</p>
+<p>If you prefer, you can manually specify just the output files you are interested in, via <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code>, <code class="docutils literal notranslate"><span class="pre">--out-file2</span></code>, and other options starting with <code class="docutils literal notranslate"><span class="pre">--out</span></code>. See the <a class="reference internal" href="manpage.html"><span class="doc">AdapterRemoval manpage</span></a> for a complete list of input and output options.</p>
+<p>By default, AdapterRemoval will attempt to infer the adapter sequences present in the data automatically. See <a class="reference internal" href="#specifying-adapters"><span class="std std-ref">A note on specifying adapters</span></a> below for more information.</p>
+</section>
+<section id="output-formats">
+<h2>Output formats<a class="headerlink" href="#output-formats" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval supports writing processed reads as compressed and uncompressed FASTQ files (<code class="docutils literal notranslate"><span class="pre">.fastq</span></code>, <code class="docutils literal notranslate"><span class="pre">.fq</span></code>, <code class="docutils literal notranslate"><span class="pre">.fastq.gz</span></code>, and <code class="docutils literal notranslate"><span class="pre">.fq.gz</span></code>), as uncompressed or compressed SAM files (<code class="docutils literal notranslate"><span class="pre">.sam</span></code> and <code class="docutils literal notranslate"><span class="pre">.sam.gz</span></code>), and as compressed BAM and uncompressed BAM files (<code class="docutils literal notranslate"><span class="pre">.bam</span></code>).</p>
+<p>Formats are specified either using the <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> option in conjunction with the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option, or by specifying one of the above extensions when using one of the explicit <code class="docutils literal notranslate"><span class="pre">--out</span></code> options. If AdapterRemoval does not recognize the extension, then the format specified via <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> is used, defaulting to gzip compressed FASTQ.</p>
+<p>By default, the uncompressed version of the format specified via <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> is used for records written to STDOUT (see below), under the assumption that the output is to be processed by another program, but this may be overridden using the <code class="docutils literal notranslate"><span class="pre">--stdout-format</span></code> option.</p>
+<p>See the <a class="reference internal" href="input_and_output.html"><span class="doc">Input and output</span></a> page for more information about files generated by AdapterRemoval.</p>
+</section>
+<section id="standard-input-stdin-standard-output-stdout">
+<h2>Standard input (STDIN), standard output (STDOUT)<a class="headerlink" href="#standard-input-stdin-standard-output-stdout" title="Link to this heading">¶</a></h2>
+<p>Reading from STDIN and writing to STDOUT can be accomplished <em>either</em> by using the special <code class="docutils literal notranslate"><span class="pre">/dev/stdin</span></code> and <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code> files as input or output, or by using the filename <code class="docutils literal notranslate"><span class="pre">-</span></code> for either:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">some-command | adapterremoval3 --in-file1 - --out-file1 - | some-other-command</span>
+</pre></div>
+</div>
+<p>Output written to STDOUT can be freely interleaved, as described in the <em>Interleaved input and output</em> below.</p>
+</section>
+<section id="disabling-output-files">
+<h2>Disabling output files<a class="headerlink" href="#disabling-output-files" title="Link to this heading">¶</a></h2>
+<p>Output that has not been enabled by setting the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option (everything but discarded reads) or by setting the <code class="docutils literal notranslate"><span class="pre">--out</span></code> option for that specific output type (e.g. <code class="docutils literal notranslate"><span class="pre">--out-singleton</span></code>) is still processed, but is then discarded before the compression step. This allows statistics to be collected for all results, even if they are not saved.</p>
+<p>AdapterRemoval additionally recognizes the special path <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code>, and will discard the output <code class="docutils literal notranslate"><span class="pre">--out</span></code> for any output type for which this path is used. That means that you can use the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option to specify a default output path, and disable the read types that you do not care about.</p>
+<p>Meaning that instead of</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1.fastq \</span>
+<span class="go">    --in-file2 reads_2.fastq \</span>
+<span class="go">    --out-html output.html \</span>
+<span class="go">    --out-json output.json \</span>
+<span class="go">    --out-file1 output.r1.fastq.gz \</span>
+<span class="go">    --out-file2 output.r2.fastq.gz \</span>
+<span class="go">    --out-merged output.merged.fastq.gz</span>
+</pre></div>
+</div>
+<p>you could write</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">   --in-file1 reads_1.fastq \</span>
+<span class="go">   --in-file2 reads_2.fastq \</span>
+<span class="go">   --out-prefix output \</span>
+<span class="go">   --out-singleton /dev/null</span>
+</pre></div>
+</div>
+</section>
+<section id="multiple-input-fastq-files">
+<h2>Multiple input FASTQ files<a class="headerlink" href="#multiple-input-fastq-files" title="Link to this heading">¶</a></h2>
+<p>More than one input file may be specified after the <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code> options. Files are processed in the specified order, as if they had been concatenated using <code class="docutils literal notranslate"><span class="pre">cat</span></code> or <code class="docutils literal notranslate"><span class="pre">zcat</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1a.fastq reads_1b.fastq reads_1c.fastq</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1a.fastq reads_1b.fastq reads_1c.fastq \</span>
+<span class="go">    --in-file2 reads_2a.fastq reads_2b.fastq reads_2c.fastq</span>
+</pre></div>
+</div>
+<p>The number of files provided for <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code> need not match, as long as the total number of reads and read order is the same.</p>
+</section>
+<section id="interleaved-input-and-output">
+<h2>Interleaved input and output<a class="headerlink" href="#interleaved-input-and-output" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval is able to read and write paired-end reads stored in a single, so-called interleaved FASTQ file (one pair at a time, first mate 1, then mate 2). This is accomplished by specifying the location of the file using <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and <em>also</em> setting the <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> command-line option:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --interleaved \</span>
+<span class="go">    --in-file1 interleaved.fastq \</span>
+<span class="go">    --out-prefix output_interleaved</span>
+</pre></div>
+</div>
+<p>Other than taking just a single input file, this mode operates almost exactly like paired-end trimming (as described above); the mode differs only in that paired reads are not written to a 'r1' and a 'r2' file, but instead these are written to a single file. The location of this file is controlled using the <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code> option.</p>
+<p>Enabling either reading or writing of interleaved FASTQ files, but not both, can be accomplished by using either of the <code class="docutils literal notranslate"><span class="pre">--interleaved-input</span></code> and <code class="docutils literal notranslate"><span class="pre">--interleaved-output</span></code> options, both of which are enabled by the <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> option.</p>
+<p>Alternatively, you can specify the same output file for multiple output types, in order to write all of those reads to a single file in interleaved mode:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 input_1.fastq.gz \</span>
+<span class="go">    --in-file2 input_2.fastq.gz \</span>
+<span class="go">    --out-file1 output_interleaved.fastq.gz \</span>
+<span class="go">    --out-file2 output_interleaved.fastq.gz</span>
+</pre></div>
+</div>
+<p>The ability to interleave output extends to all output types, except for the two reports (<code class="docutils literal notranslate"><span class="pre">--out-json</span></code> and <code class="docutils literal notranslate"><span class="pre">--out-html</span></code>), and one could for example write both discarded and singleton reads to the same file (<code class="docutils literal notranslate"><span class="pre">output_interleaved.discarded.fastq.gz</span></code>) using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">     --in-file1 input_1.fastq.gz \</span>
+<span class="go">     --in-file2 input_2.fastq.gz \</span>
+<span class="go">     --out-prefix output_interleaved \</span>
+<span class="go">     --out-discarded output_interleaved.discarded.fastq.gz \</span>
+<span class="go">     --out-singleton output_interleaved.discarded.fastq.gz</span>
+</pre></div>
+</div>
+</section>
+<section id="different-quality-score-encodings">
+<h2>Different quality score encodings<a class="headerlink" href="#different-quality-score-encodings" title="Link to this heading">¶</a></h2>
+<p>By default, AdapterRemoval expects the quality scores in FASTQ reads to be Phred+33 encoded, meaning that the error probabilities are encoded as <code class="docutils literal notranslate"><span class="pre">round('!'</span> <span class="pre">-</span> <span class="pre">10</span> <span class="pre">*</span> <span class="pre">log10(p))</span></code>. Most data will be encoded using Phred+33, but Phred+64 and 'Solexa' encoded quality scores are also supported. These are selected by specifying the <code class="docutils literal notranslate"><span class="pre">--quality-format</span></code> command-line option (specifying either '33', '64', or 'solexa'):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --quality-format 64 \</span>
+<span class="go">    --in-file1 reads_q64.fastq \</span>
+<span class="go">    --out-prefix output_phred_64</span>
+</pre></div>
+</div>
+<p>Output is always saved as Phred+33. See <a class="reference external" href="https://en.wikipedia.org/wiki/FASTQ_format#Encoding">this Wikipedia article</a> for a detailed overview of Phred encoding schemes currently and previously in use.</p>
+</section>
+<section id="demultiplexing">
+<h2>Demultiplexing<a class="headerlink" href="#demultiplexing" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval supports simultaneous demultiplexing and adapter trimming; demultiplexing is carried out using a simple comparison between the specified barcode (a sequence of A, C, G, and T) and the first N bases of the mate 1 read, where N is the length of the barcode. Demultiplexing of double-indexed sequences is also supported, in which case two barcodes must be specified for each sample. The first barcode is then compared to first <code class="docutils literal notranslate"><span class="pre">N_1</span></code> bases of the mate 1 read, and the second barcode is compared to the first <code class="docutils literal notranslate"><span class="pre">N_2</span></code> bases of the mate 2 read. By default, this comparison requires a perfect match. Reads identified as containing a specific barcode(s) are then trimmed using adapter sequences including the barcode(s) as necessary. Reads for which no (pair of) barcodes matched are written to a separate file or a pair of files (for paired-end reads).</p>
+<p>Demultiplexing is enabled by creating a table of barcodes, the first column of which species the sample name (using characters a-z, A-Z, 0-9, or _) and the second and (optional) third columns specify the barcode sequences expected at the 5' termini of mate 1 and mate 2 reads, respectively.</p>
+<p>For example, a table of barcodes from a double-indexed run might be as follows (see examples/barcodes.txt):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cat<span class="w"> </span>barcodes.txt
+<span class="go">sample_1 ATGCGGA TGAATCT</span>
+<span class="go">sample_2 ATGGATT ATAGTGA</span>
+<span class="go">sample_7 CAAAACT TCGCTGC</span>
+</pre></div>
+</div>
+<p>AdapterRemoval is invoked with the <code class="docutils literal notranslate"><span class="pre">--barcode-table</span></code> option, specifying the path to this table:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 demux_1.fastq \</span>
+<span class="go">    --in-file2 demux_2.fastq \</span>
+<span class="go">    --out-prefix output_demux \</span>
+<span class="go">    --barcode-table barcodes.txt</span>
+</pre></div>
+</div>
+<p>This generates a set of output files for each sample specified in the barcode table, using <code class="docutils literal notranslate"><span class="pre">output_demux</span></code> as the prefix for output filenames, followed by a dot and the sample name, followed by a dot and the default name for a given file type. The reports generated by AdapterRemoval contains information about the number of reads identified for each sample and (in the JSON file) detailed per-sample quality metrics.</p>
+<p>The maximum number of mismatches allowed when comparing barcodes is controlled using the options <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code>, <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r1</span></code>, and <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r2</span></code>, which specify the maximum number of mismatches total, and the maximum number of mismatches for the mate 1 and mate 2 barcodes respectively. Thus, if mm_1(i) and mm_2(i) represents the number of mismatches observed for barcode-pair i for a given pair of reads, these options require that</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>mm_1(i) &lt;= <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r1</span></code></p></li>
+<li><p>mm_2(i) &lt;= <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r2</span></code></p></li>
+<li><p>mm_1(i) + mm_2(i) &lt;= <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code></p></li>
+</ol>
+</div></blockquote>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--demultiplex-only</span></code> option is used, then no trimming/processing is performed after the demultiplexing step:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 demux_1.fastq \</span>
+<span class="go">    --in-file2 demux_2.fastq \</span>
+<span class="go">    --out-prefix output_only_demux \</span>
+<span class="go">    --barcode-table barcodes.txt \</span>
+<span class="go">    --demultiplex-only</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Output produced in <code class="docutils literal notranslate"><span class="pre">--demultiplex-only</span></code> mode may still contain adapter sequences, and for paired reads/double indexed data these adapters will be prefixed by the barcode sequence(s). Downstream trimming will therefore have to account for these extra sequences.</p>
+</div>
+</section>
+<section id="quality-reports-and-identifying-adapter-sequences">
+<span id="s-identifying-adapters"></span><h2>Quality reports and identifying adapter sequences<a class="headerlink" href="#quality-reports-and-identifying-adapter-sequences" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval generates a detailed report of input and output data, as part of its operation. This report can additionally be run without performing read processing, meaning that statistics are only provided for the &quot;raw&quot; input data.</p>
+<p>By default, quality reports are written to <code class="docutils literal notranslate"><span class="pre">prefix.html</span></code> and <code class="docutils literal notranslate"><span class="pre">prefix.json</span></code>, if the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option is used. This can also be controlled by the <code class="docutils literal notranslate"><span class="pre">--out-json</span></code> and <code class="docutils literal notranslate"><span class="pre">--out-html</span></code> options. This means that we can simply omit other output files to generate only the reports:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1.fastq \</span>
+<span class="go">    --in-file2 reads_2.fastq \</span>
+<span class="go">    --out-json my_report.json \</span>
+<span class="go">    --out-html my_report.html</span>
+</pre></div>
+</div>
+<p>AdapterRemoval can also generate a report without performing any processing of the input, using the <code class="docutils literal notranslate"><span class="pre">--report-only</span></code> option, which greatly increases throughput. When run without read processing enabled, AdapterRemoval attempts to infer a consensus adapter sequence, based on fragments identified as belonging to the adapters through pairwise alignments of the reads (PE mode only).</p>
+<p>Since only the reports are generated in this mode, we can use the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option to simplify the command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --report-only \</span>
+<span class="go">    --in-file1 reads_1.fastq \</span>
+<span class="go">    --in-file2 reads_2.fastq \</span>
+<span class="go">    --out-prefix my_report</span>
+</pre></div>
+</div>
+<p>The consensus sequences inferred are compared to those specified using the <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code> command-line options, if specified, or the best matching adapter otherwise (see below). Pipes (<code class="docutils literal notranslate"><span class="pre">|</span></code>) indicate matches between the provided sequences and the consensus sequence, and <code class="docutils literal notranslate"><span class="pre">*</span></code> indicate the presence of unspecified bases (Ns).</p>
+<p>The best practice is to compare the consensus with published <a class="reference external" href="illumina_truseq_adapters">Illumina</a> or <a class="reference external" href="https://en.mgitech.cn/Download/download_file/id/71">BGI/MGI</a> adapter sequences and pick out the best matches. The built-in list of adapters can be viewed by using the <code class="docutils literal notranslate"><span class="pre">--adapter-database</span></code> option (see below). However, on occasion there may be consistent differences between the published sequences and the observed adapter sequences, in which case you should prefer the observed sequence.</p>
+</section>
+<section id="a-note-on-specifying-adapters">
+<span id="specifying-adapters"></span><h2>A note on specifying adapters<a class="headerlink" href="#a-note-on-specifying-adapters" title="Link to this heading">¶</a></h2>
+<p>By default, AdapterRemoval will attempt to identify the type of adapter sequences present in the input data, based on a database of adapter sequences included with AdapterRemoval. The selected adapter sequences (if any) will be listed in the resulting QC reports.</p>
+<p>If AdapterRemoval cannot identify any potential adapter sequences in the input, then AdapterRemoval will either assume that the data contains no adapters (in single-end mode), or perform adapter trimming based on the pair-wise alignment of the input reads (paired-end mode). This behavior is controlled via the <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter-fallback</span></code> options.</p>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">--adapter-database</span></code> option to list the known adapter sequences, in either <code class="docutils literal notranslate"><span class="pre">tsv</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code> format:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 --adapter-database tsv</span>
+</pre></div>
+</div>
+<p>This database can be extended by combining <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span> <span class="pre">auto</span></code> with the options <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code>, or with <code class="docutils literal notranslate"><span class="pre">--adapter-table</span></code>.</p>
+<section id="manually-specifying-adapters">
+<h3>Manually specifying adapters<a class="headerlink" href="#manually-specifying-adapters" title="Link to this heading">¶</a></h3>
+<p>Adapter sequences may also be set explicitly via the <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code> options, should you be aware of the exact sequences. Adapter sequences are specified in the read orientation when using the <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code> command-line options, directly corresponding to the sequence that is observed in the FASTQ files produced by the base calling software.</p>
+<p>In other words, if we were processing data generated using <a class="reference external" href="illumina_truseq_adapters">Illumina TruSeq adapters</a>, then the TruSeq read 1 adapter should be found in files passed to <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span><span class="s2">&quot;AGATCGGAAGAGCACACGTCTGAACTCCAGTCA&quot;</span><span class="w"> </span>file1.fastq
+<span class="go">AGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGATGAATCTCGTATGCCGTCTTCTGCTTGAAAAAAAAACAAGAAT</span>
+<span class="go">CTGGAGTTCAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGATGAATCTCGTATGCCGTCTTCTGCTTGAAAAAAA</span>
+<span class="go">GGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACCGATGAATCTCGTATGCCGTCTTCTGCTTGCAAATTGAAAACAC</span>
+</pre></div>
+</div>
+<p>And the TruSeq read 2 adapter should be found in files passed to <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span><span class="s2">&quot;AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT&quot;</span><span class="w"> </span>file2.fastq<span class="w"> </span>CAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATTCAAAAAAAGAAAAACATCTTG<span class="w"> </span>GAACTCCAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATTCAAAAAAAATAGA<span class="w"> </span>GAACTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATTCAAAAACATAAGACCTA
+</pre></div>
+</div>
+<p>How much of these adapter sequences that can be found in your input (if anything) will depend on the read length and the size of the DNA fragments sequenced. AdapterRemoval is designed to detect even short adapter fragments.</p>
+<p>To manually set these adapters, use the command-line options <code class="docutils literal notranslate"><span class="pre">--adapter1</span> <span class="pre">AGATCGGAAGAGCACACGTCTGAACTCCAGTCA</span> <span class="pre">--adapter2</span> <span class="pre">AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT</span></code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">N</span></code> in an adapter sequence is treated as a wildcard. An <code class="docutils literal notranslate"><span class="pre">N</span></code> will align against any other base, including other <code class="docutils literal notranslate"><span class="pre">N``s,</span> <span class="pre">but</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">affect</span> <span class="pre">the</span> <span class="pre">score</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">resulting</span> <span class="pre">alignment</span> <span class="pre">and</span> <span class="pre">are</span> <span class="pre">not</span> <span class="pre">counted</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">purpose</span> <span class="pre">of</span> <span class="pre">filters</span> <span class="pre">such</span> <span class="pre">as</span> <span class="pre">``--min-overlap</span></code>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>It is generally not worthwhile to specify more than the first ~30 bp of the adapter sequences to be trimmed. Doing so does not notably improve sensitivity or specificity, but does result in a lower throughput.</p>
+</div>
+</section>
+<section id="trimming-paired-end-data-with-multiple-adapter-pairs">
+<h3>Trimming paired-end data with multiple adapter pairs<a class="headerlink" href="#trimming-paired-end-data-with-multiple-adapter-pairs" title="Link to this heading">¶</a></h3>
+<p>It is possible to provide multiple, different sets of adapters for trimming, in which case AdapterRemoval will select the single best match for each read (pair), and trim that adapter or adapter pair from the read or read pair.</p>
+<p>Adapters must be written in a one or two-column table, for SE and PE trimming, respectively. Columns can be separated with any whitespace. For example, to specify both the recommended Illumina TruSeq and the recommended BGISeq adapters, one might save the following text in the file <code class="docutils literal notranslate"><span class="pre">adapters.txt</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>AGATCGGAAGAGCACACGTCTGAACTCCAGTCA  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+AAGTCGGAGGCCAAGCGGTCTTAGGAAGACAA   AAGTCGGATCGTAGCCATGTCGTTCTGTGAGCCAAGGAGTTG
+</pre></div>
+</div>
+<p>This file is then specified using the <code class="docutils literal notranslate"><span class="pre">--adapter-table</span></code> option:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">adapterremoval3 \</span>
+<span class="go">    --in-file1 reads_1.fastq \</span>
+<span class="go">    --in-file2 reads_2.fastq \</span>
+<span class="go">    --out-prefix output_multi \</span>
+<span class="go">    --adapter-table adapters.txt</span>
+</pre></div>
+</div>
+<p>Pairs of adapters are used exactly as written, and the resulting QC reports lists how frequently each adapter or each pair of adapters was used.</p>
+<p>Note that throughput decreases proportionally to the number of adapters, and it is therefore <em>not</em> recommended to use this functionality unless strictly necessary. When adapters differ only after the first N bases, for example due to an embedded barcode, then it is typically better to specify the common part of the adapter sequences with <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and (optionally) <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code>, instead of specifying multiple, different adapter pairs in a table.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AdapterRemoval</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detailed_overview.html">Detailed overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_and_output.html">Input and output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating.html">Migrating from older versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manpage.html">AdapterRemoval manpage</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="detailed_overview.html" title="next chapter">Detailed overview</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Mikkel Schubert; Stinus Lindgreen.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/getting_started.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

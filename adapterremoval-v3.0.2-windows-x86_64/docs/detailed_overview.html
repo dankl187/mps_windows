@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Detailed overview &#8212; AdapterRemoval 3.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=3f474186"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Input and output" href="input_and_output.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="detailed-overview">
+<h1>Detailed overview<a class="headerlink" href="#detailed-overview" title="Link to this heading">¶</a></h1>
+<p>This page describes the data-flow in AdapterRemoval, and lists what command-line options affect which parts of the process.</p>
+<section id="reading-fastq-files">
+<h2>1. Reading FASTQ files<a class="headerlink" href="#reading-fastq-files" title="Link to this heading">¶</a></h2>
+<p>FASTQ data is read from one or more files specified with <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and (optionally) <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code>. If either the <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> or the <code class="docutils literal notranslate"><span class="pre">--interleaved-input</span></code> options are specified, the file or files specified with <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> are expected to contain sequential pairs of FASTQ reads. Multiple files may be specified for <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> and <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code>, in which these sets of files are treated as if they were concatenated into one big file. See below for how to read data from STDIN.</p>
+<p>FASTQ quality scores are expected to be <a class="reference external" href="https://en.wikipedia.org/wiki/FASTQ_format#Quality">Phred+33</a> encoded by default, but this can be changed using the <code class="docutils literal notranslate"><span class="pre">--quality-format</span></code> option. By default, AdapterRemoval will attempt to infer the character used to separate the read name from the mate number (for example <code class="docutils literal notranslate"><span class="pre">/</span></code> in <code class="docutils literal notranslate"><span class="pre">&#64;my_read/1</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;my_read/2</span></code>), but this can be overridden using the <code class="docutils literal notranslate"><span class="pre">--mate-separator</span></code> option.</p>
+<p>If enabled by the <code class="docutils literal notranslate"><span class="pre">--mask-degenerate-bases</span></code> option, IUPAC encoded degenerate bases (<code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code>, <code class="docutils literal notranslate"><span class="pre">H</span></code>, <code class="docutils literal notranslate"><span class="pre">K</span></code>, <code class="docutils literal notranslate"><span class="pre">M</span></code>, <code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">V</span></code>, <code class="docutils literal notranslate"><span class="pre">W</span></code>, and <code class="docutils literal notranslate"><span class="pre">Y</span></code>) are replaced with <code class="docutils literal notranslate"><span class="pre">N</span></code>. If enabled by the <code class="docutils literal notranslate"><span class="pre">--convert-uracils</span></code> option, positions containing uracils (<code class="docutils literal notranslate"><span class="pre">U</span></code>) are converted to thymine (<code class="docutils literal notranslate"><span class="pre">T</span></code>). All bases are furthermore converted to uppercase and any dots (<code class="docutils literal notranslate"><span class="pre">.</span></code>) are replaced with <code class="docutils literal notranslate"><span class="pre">N</span></code>.</p>
+<p>Basic statistics are collected based on this pre-processed data, including detailed per-nucleotide statistics, using a fraction of reads determined by the <code class="docutils literal notranslate"><span class="pre">--report-sample-rate</span></code> option. This sampling of data, for rates less than 1, represents the only random behavior in AdapterRemoval. If enabled by the <code class="docutils literal notranslate"><span class="pre">--report-duplication</span></code> option, the amount of read duplication is estimated using the <a class="reference external" href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a> methodology, individually for mate 1 and mate 2 reads.</p>
+<p>If no adapters have been specified using <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code>, and <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span></code> is set to <code class="docutils literal notranslate"><span class="pre">auto</span></code>, AdapterRemoval will attempt to identify the adapters present in the first 100,000 reads or read pairs, using a built-in database of adapter sequences (see <code class="docutils literal notranslate"><span class="pre">--adapter-database</span></code>). If no adapters could be identified in this manner, AdapterRemoval will fall back to the behavior specified via <code class="docutils literal notranslate"><span class="pre">--adapter-fallback</span></code>, either aborting, assuming that the reads contain no adapter sequences, or attempting to infer adapters purely from overlap analyses (PE only).</p>
+<p>If specified, the <code class="docutils literal notranslate"><span class="pre">--head</span></code> option limits the total number of reads (in single-end mode) or pairs (in paired-end mode) that are read from the input.</p>
+<p>For a detailed description of supported input files, see <a class="reference internal" href="input_and_output.html"><span class="doc">Input and output</span></a>.</p>
+</section>
+<section id="demultiplexing">
+<h2>2. Demultiplexing<a class="headerlink" href="#demultiplexing" title="Link to this heading">¶</a></h2>
+<p>If a table of barcodes is specified using the <code class="docutils literal notranslate"><span class="pre">--barcode-table</span></code>, then demultiplexing of the data is performed prior to trimming of adapters and low-quality bases. By default, each barcode or pair of barcodes is expected to identify a unique sample, but this restriction can be loosened using the <code class="docutils literal notranslate"><span class="pre">--multiple-barcodes</span></code> option.</p>
+<p>By default, these barcodes are considered to be in a <code class="docutils literal notranslate"><span class="pre">unspecified</span></code> orientation. An orientation may be specified with <code class="docutils literal notranslate"><span class="pre">--barcode-orientation</span></code>, and if either <code class="docutils literal notranslate"><span class="pre">forward</span></code> or <code class="docutils literal notranslate"><span class="pre">reverse</span></code> is used, then the corresponding reverse or forward barcode pairs are automatically generated. When combined with <code class="docutils literal notranslate"><span class="pre">--normalize-orientation</span></code>, this normalizes the orientation of merged reads (see below).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--barcode-mm</span></code> option defines a global maximum number of mismatches allowed across both barcodes (in paired-end mode), while the <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r1</span></code> and <code class="docutils literal notranslate"><span class="pre">--barcode-mm-r2</span></code> options sets limits for either barcode in addition to the global maximum.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--demultiplex-only</span></code> option is set, the read processing and filtering steps are skipped and output is written as described in <a class="reference internal" href="#output">5. Output</a>.</p>
+</section>
+<section id="read-processing">
+<h2>3. Read processing<a class="headerlink" href="#read-processing" title="Link to this heading">¶</a></h2>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--pre-trim3p</span></code> option is enabled, the reads are trimmed by the specified amounts of bases. Next, poly-X tails are trimmed if the <code class="docutils literal notranslate"><span class="pre">--pre-trim-polyx</span></code> option is enabled.</p>
+<p>Each read and adapter sequence (single-end mode) or each read pair and adapter sequences (paired-end mode) are aligned, using the adapter sequences specified with <code class="docutils literal notranslate"><span class="pre">--adapter1</span></code> and <code class="docutils literal notranslate"><span class="pre">--adapter2</span></code> or selected via <code class="docutils literal notranslate"><span class="pre">--adapter-selection</span></code> (see above). The alignment is performed as follows, for single-end and paired-end reads respectively:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SE: [Read 1 -------------]
+                [Adapter 1 -----]
+
+PE: [Adapter 2&#39; ----][Read 1 ------------]
+              [Read 2&#39; ------------][Adapter 1 ----]
+</pre></div>
+</div>
+<p>Note that adapter 2 and read 2 are both reverse complemented in the above figure. If multiple adapters are specified using <code class="docutils literal notranslate"><span class="pre">--adapter-table</span></code>, then alignment is carried out with each adapter or adapter pair, in order to select the single best alignment, if any.</p>
+<p>If a valid alignment is found, and if the error rate in the alignment does not exceed the maximum error rate defined by <code class="docutils literal notranslate"><span class="pre">--mismatch-rate</span></code>, and if the alignment involves at least <code class="docutils literal notranslate"><span class="pre">--min-overlap</span></code> unambiguous bases (not 'N'), then the inferred adapter sequences are trimmed.</p>
+<p>In paired-end mode only, if the <code class="docutils literal notranslate"><span class="pre">--merge</span></code> option is set and the best alignment is at least <code class="docutils literal notranslate"><span class="pre">--merge-threshold</span></code> long, then the two reads are merged into a single sequence. Ambiguous nucleotides (Ns) are not counted as part of the alignment, for the purpose of checking <code class="docutils literal notranslate"><span class="pre">--merge-threshold</span></code>.</p>
+<p>Depending on the <code class="docutils literal notranslate"><span class="pre">--merge-strategy</span></code> option, Phred scores of matching merged bases are either set to the maximum of the two observed Phred-scores, or to the sum of Phred scores (the probability that both reads are wrong). The output Phred score is capped by the <code class="docutils literal notranslate"><span class="pre">--merge-quality-max</span></code>, to ensure that quality scores are compatible with downstream tools.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--post-trim5p</span></code> or <code class="docutils literal notranslate"><span class="pre">--post-trim3p</span></code> options are specified, the reads are trimmed by the specified amounts of bases and poly-X tails are trimmed if the <code class="docutils literal notranslate"><span class="pre">--post-trim-polyx</span></code> option is specified. Only trimming with the <code class="docutils literal notranslate"><span class="pre">--post-trim5p</span></code> is performed on merged reads, since the 3' ends are typically located inside the reads or correspond to the 5' of the other mate (see alignment above).</p>
+<p>Quality trimming is performed using the trimming algorithm specified using the <code class="docutils literal notranslate"><span class="pre">--quality-trimming</span></code> option and the related options. By default both ends of a read will be quality trimmed, but trimming can be limited to the 3' end via the <code class="docutils literal notranslate"><span class="pre">--preserve5p</span></code> option.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">--prefix-read1</span></code>, <code class="docutils literal notranslate"><span class="pre">--prefix-read2</span></code>, and <code class="docutils literal notranslate"><span class="pre">--prefix-merged</span></code> options are set, the mate 1, mate 2, and merged read names are prefixed using the corresponding values.</p>
+</section>
+<section id="read-filtering">
+<h2>4. Read filtering<a class="headerlink" href="#read-filtering" title="Link to this heading">¶</a></h2>
+<p>Trimmed reads with more than <code class="docutils literal notranslate"><span class="pre">--max-ns</span></code> or <code class="docutils literal notranslate"><span class="pre">--max-ns-fraction</span></code> ambiguous bases (Ns), that are shorter than <code class="docutils literal notranslate"><span class="pre">--min-length</span></code> or longer than <code class="docutils literal notranslate"><span class="pre">--max-length</span></code>, that have a mean Phred encoded quality score less than <code class="docutils literal notranslate"><span class="pre">--min-mean-quality</span></code>, or that have a complexity score less than <code class="docutils literal notranslate"><span class="pre">--min-complexity</span></code> are discarded. If only one read in a pair is filtered, then the read that was not filtered is classified as a &quot;singleton&quot; read below.</p>
+</section>
+<section id="output">
+<h2>5. Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h2>
+<p>Reads are written to files specified using any combination of <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> and/or individual <code class="docutils literal notranslate"><span class="pre">--out</span></code> options, such as <code class="docutils literal notranslate"><span class="pre">--out-discarded</span></code>. The <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> automatically assigns filenames for all output using the specified prefix, excluding discarded reads, which are not saved by default. If <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> is combined with individual <code class="docutils literal notranslate"><span class="pre">--out</span></code> options, then the individual options take priority.</p>
+<p>If multiple <code class="docutils literal notranslate"><span class="pre">--out</span></code> options point to the same file, then all those reads are written to the same file in input-order. At least one <code class="docutils literal notranslate"><span class="pre">--out</span></code> option must be specified, but one can perform a dry run by setting any output option to <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code> (see below).</p>
+<p>Basic statistics are collected for all output data, and detailed per-nucleotide statistics are collected from a random selection of reads determined by the <code class="docutils literal notranslate"><span class="pre">--report-sample-rate</span></code> option.</p>
+<p>See below for how to read data from STDIN. For a detailed overview output files, see <a class="reference internal" href="input_and_output.html"><span class="doc">Input and output</span></a>.</p>
+<section id="supported-output-formats">
+<h3>Supported output formats<a class="headerlink" href="#supported-output-formats" title="Link to this heading">¶</a></h3>
+<p>Output is written as gzip compressed FASTQ records by default (see below), but this can be controlled using either the <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> option for filenames generated via the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option, or by manually specifying a filename with the desired extension using one of the <code class="docutils literal notranslate"><span class="pre">--out</span></code> options. AdapterRemoval currently recognizes <code class="docutils literal notranslate"><span class="pre">.fq.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.fastq.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.fq</span></code>, <code class="docutils literal notranslate"><span class="pre">.fastq</span></code>, <code class="docutils literal notranslate"><span class="pre">.sam.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.sam</span></code>, and <code class="docutils literal notranslate"><span class="pre">.bam</span></code>. If AdapterRemoval does not recognize the extension, then the format specified with <code class="docutils literal notranslate"><span class="pre">--out-format</span></code> is used.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--stdout-format</span></code> sets the format for reads written to STDOUT, which defaults to the same format as <code class="docutils literal notranslate"><span class="pre">--out-format</span></code>, but uncompressed.</p>
+</section>
+<section id="interleaved-output">
+<h3>Interleaved output<a class="headerlink" href="#interleaved-output" title="Link to this heading">¶</a></h3>
+<p>Interleaved output, in which both mate 1 and mate 2 reads are written to the same file, can be produced in several ways:</p>
+<ul class="simple">
+<li><p>By using the <code class="docutils literal notranslate"><span class="pre">--interleaved</span></code> or <code class="docutils literal notranslate"><span class="pre">--interleaved-output</span></code> option to enable interleaved input and output, or just interleaved output. The interleaved reads are written to <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code> filename.</p></li>
+<li><p>By specifying the same filename for <code class="docutils literal notranslate"><span class="pre">--out-file1</span></code> and <code class="docutils literal notranslate"><span class="pre">--out-file2</span></code>. This includes special filenames <code class="docutils literal notranslate"><span class="pre">-</span></code> and <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code>, to write interleaved output to STDOUT (see below).</p></li>
+</ul>
+</section>
+<section id="compressed-output">
+<h3>Compressed output<a class="headerlink" href="#compressed-output" title="Link to this heading">¶</a></h3>
+<p>As described above, AdapterRemoval defaults to writing gzip compressed FASTQ files. The compression level used for these, as well as for gzip compressed SAM files and for BAM files, can be controlled via the <code class="docutils literal notranslate"><span class="pre">--compression-level</span></code> option.</p>
+<p>Depending on the compression level, this option either enables block-based compression using <code class="docutils literal notranslate"><span class="pre">libdeflate</span></code> (for levels 2 and above), or stream-based compression using <code class="docutils literal notranslate"><span class="pre">isa-l</span></code> for level 1. Compression level 0 is uncompressed, but includes gzip headers and checksums for validation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most tools are compatible with block-based compression, but if a downstream tool only processes a few hundreds of your trimmed reads, then try running AdapterRemoval with <code class="docutils literal notranslate"><span class="pre">--compression-level</span> <span class="pre">1</span></code> to enable stream-based compression. BAM output is always block-compressed.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>On fast storage, and if space is not a limiting factor, then <code class="docutils literal notranslate"><span class="pre">--compression-level</span></code> can be decreased to 1 for an up to 50-100% increase in throughput, at the cost of 10-20% larger files, depending on the data and hardware.</p>
+</div>
+</section>
+</section>
+<section id="stdin-stdout-and-dev-null">
+<h2>STDIN, STDOUT, and /dev/null<a class="headerlink" href="#stdin-stdout-and-dev-null" title="Link to this heading">¶</a></h2>
+<p>AdapterRemoval supports four special filenames: <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">/dev/stdin</span></code>, <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code>, and <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code>:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">/dev/stdin</span></code> is used for either <code class="docutils literal notranslate"><span class="pre">--in-file1</span></code> or <code class="docutils literal notranslate"><span class="pre">--in-file2</span></code>, then AdapterRemoval will read those reads from STDIN. Note that it is currently not possible to use <code class="docutils literal notranslate"><span class="pre">--in-file1</span> <span class="pre">-</span> <span class="pre">--in-file2</span> <span class="pre">-</span></code> for interleaved input, instead use <code class="docutils literal notranslate"><span class="pre">--interleaved-input</span> <span class="pre">--in-file1</span> <span class="pre">-</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">/dev/stdout</span></code> is used for any <code class="docutils literal notranslate"><span class="pre">--out-*</span></code> options, then that file is written to STDOUT. As noted above, multiple read types may be written to STDOUT in this manner, meaning that <code class="docutils literal notranslate"><span class="pre">--interleaved-output</span> <span class="pre">--out-file1</span> <span class="pre">-</span></code> and <code class="docutils literal notranslate"><span class="pre">--out-file1</span> <span class="pre">-</span> <span class="pre">--out-file2</span> <span class="pre">-</span></code> give identical output.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code> is used with any <code class="docutils literal notranslate"><span class="pre">--out-*</span></code> option, then the corresponding files are not saved. Statistics are still collected for any processed reads.</p></li>
+</ul>
+<p>As specifying <code class="docutils literal notranslate"><span class="pre">/dev/null</span></code> skips the compression/write steps, it is highly recommended to disable any undesired file types in this way when using the <code class="docutils literal notranslate"><span class="pre">--out-prefix</span></code> option. Alternatively, only specify the exact file-types that you want to save for the same effect.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AdapterRemoval</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Detailed overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_and_output.html">Input and output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating.html">Migrating from older versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manpage.html">AdapterRemoval manpage</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="getting_started.html" title="previous chapter">Getting started</a></li>
+      <li>Next: <a href="input_and_output.html" title="next chapter">Input and output</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Mikkel Schubert; Stinus Lindgreen.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/detailed_overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
